@@ -9,20 +9,20 @@
         height: 850px;
         background-image: url('/Images/bancotuong.jpg');
         position: relative;
-        top:-50px;
+        top: -50px;
     }
 
     .chessnode {
         position: absolute;
         width: 50px;
         height: 50px;
-        z-index:1;
+        z-index: 1;
     }
 
     .chessimgnode {
         width: 50px;
         height: 50px;
-        z-index:1;
+        z-index: 1;
     }
 </style>
 
@@ -256,6 +256,70 @@
                     }
                 }
                 return check;
+            },
+            KiemTraTuong(tuong) {
+                for (var i = 0; i <= 9; i++) {
+                    for (var j = 0; j <= 8; j++) {
+                        if (app.chessMatrix[i][j].id.indexOf(tuong) >= 0) {
+                            return [i, j];
+                        }
+                    }
+                }
+
+                return 0;
+            },
+            KiemTra2ConCoCanhTuong(tuong) {
+                var chess = app.KiemTraTuong(tuong);
+                var mangketuong = [];
+                var tam = 0;
+                var min = 0;
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 8; j++) {
+                        if (app.chessMatrix[i][chess[j]].id && ((j == chess[1]) || (i == chess[0]))) {
+                            var kqi = chess[0] - i;
+                            var kqj = chess[1] - j;
+                            if (kqi < 0) {
+                                kqi.min
+                            }
+                        }
+                    }
+                }
+            },
+            KiemTraChieuTuong(tuong) {
+                var chess = app.KiemTraTuong(tuong);
+                var mau = "";
+                if (tuong == "chutuongdo") {
+                    mau = "den";
+                    for (let i = 0; i < 9; i++) {
+                        if (i != chess[0]) {
+                            if ((app.chessMatrix[i][chess[1]].id)) {
+                                if ((app.chessMatrix[i][chess[1]].id.indexOf("xe" + mau) >= 0) || ((app.chessMatrix[i][chess[1]].id.indexOf("tot" + mau) >= 0) && ((i - chess[0]) == 1)) || ((app.chessMatrix[i][chess[1]].id.indexOf("chutuong" + mau) >= 0))) {
+
+                                    return 1;
+                                }
+                                else {
+                                    return 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (tuong == "chutuongden") {
+                    mau = "do";
+                    for (let i = chess[0] - 1; i >= 0; i--) {
+                        if ((app.chessMatrix[i][chess[1]].id)) {
+                            console.log("ke tuong" + app.chessMatrix[i][chess[1]].id + "  " + tuong);
+                            if ((app.chessMatrix[i][chess[1]].id.indexOf("xe" + mau) >= 0) || ((app.chessMatrix[i][chess[1]].id.indexOf("tot" + mau) >= 0) && (Math.abs(i - chess[0]) == 1)) || ((app.chessMatrix[i][chess[1]].id.indexOf("chutuong" + mau) >= 0))) {
+
+                                return 1;
+                            }
+                            else {
+                                return 0;
+                            }
+                        }
+                    }
+                }
+                return 0;
             },
             anQuanCo(id) {
                 if (id.indexOf("chutuongdo") >= 0) {
@@ -577,7 +641,12 @@
                             var res = axios.post('/api/chess/movenode', movelist).then(response => {
                                 //this.chessRoom = response.data.data;
                                 //alert(response);
-
+                                if (app.KiemTraChieuTuong("chutuongdo") == 1) {
+                                    alert("chiếu tướng");
+                                }
+                                if (app.KiemTraChieuTuong("chutuongden") == 1) {
+                                    alert("chiếu tướng");
+                                }
                             })
                                 .catch(error => {
                                     console.log(error)
